@@ -1,13 +1,47 @@
+const fs = require ('fs');
+
 class ProductManager{
 
     products;
+    path;
 
     static productId = 0;
 
     constructor (){
 
-        this.products = [];
+        this.path = './data/products.json';
+        this.products = this.#getProductsInFile();
+        
 
+    }
+
+    #getProductsInFile(){
+        try{
+            if(fs.existsSync(this.path)){
+                return JSON.parse(fs.readFileSync(this.path, 'utf-8'));
+            }else{
+                return [];
+            }
+
+        }catch (error){
+            console.log(`Ocurrio un error al momento de cargar el archivo de productos, error: ${error}`);
+        }
+    }
+
+    #saveFile(){
+        try{
+            fs.writeFileSync(this.path, JSON.stringify(this.products));
+        }catch (error){
+            console.log(`Ocurrio un error al momento de guardar en el archivo de productos, error: ${error}`);
+        }
+    }
+
+    #ProductIdAssigne(){
+        let id = 1;
+        if (this.products.length != 0){
+            id = this.products[this.products.length - 1].id + 1;
+        }
+        return id;
     }
 
     addProduct(title, description, price, thumbnail, code, stock){
@@ -18,7 +52,7 @@ class ProductManager{
                 return `Este codigo ${code} ya esta asignado a otro producto, ingrese uno diferente`
             }else {
                 ProductManager.productId = ProductManager.productId +1;
-                const id = ProductManager.productId;
+                const id = this.#ProductIdAssigne();
                 const NewProduct = {
                     id:id,
                     title: title,
@@ -29,6 +63,8 @@ class ProductManager{
                     stock:stock
                 }
                 this.products.push(NewProduct);
+                this.#saveFile();
+                console.log('Producto agregado');
             }
         }else{
             return `Todos los campos son obligatorios, intente de nuevo`
@@ -49,14 +85,51 @@ class ProductManager{
         }
 
     }
+
+    updateProduct(id, propsUpdate){
+        const index = this.products.findIndex(item => item.id === id);
+
+        if(index >= 0){
+            const {id, ...rest} = propsUpdate;
+            this.products[index] = {...this.products[index], ...rest}
+            this.#saveFile();
+            console.log('Producto actualizado');
+        }else {
+            console.log(`El producto con el id ${id} no existe`);
+        }
+
+
+    }
+
+    deleteProduct(id){
+
+        const index = this.products.findIndex(item => item.id === id);
+
+        if (index >= 0){
+            this.products = this.products.filter(item => item.id !== id);
+            this.#saveFile();
+            console.log ('Producto eliminado')
+        }else{
+            console.log(`El producto con el id ${id} no existe`)
+        }
+
+    }
 }
 
 const producto = new ProductManager();
 
-console.log(producto.getProduct());
-console.log(producto.addProduct('Producto prueba', 'Esto es un producto prueba', 200, 'SinImagen', 'ABC123', 25));
-console.log(producto.addProduct('Producto prueba2', 'Esto es un producto prueba', 300, 'SinImagen', 'ABC345'));
-console.log(producto.getProduct());
-console.log(producto.addProduct('Producto prueba3', 'Esto es un producto prueba', 250, 'SinImagen', 'ABC123', 30));
-console.log(producto.getProductById(3));
-console.log(producto.getProductById(1));
+//console.log(producto.getProduct());
+//console.log(producto.addProduct('Producto prueba', 'Esto es un producto prueba', 200, 'SinImagen', 'ABC123', 25));
+//console.log(producto.addProduct('Producto prueba', 'Esto es un producto prueba', 210, 'SinImagen', 'ABC456', 35));
+//console.log(producto.addProduct('Producto prueba', 'Esto es un producto prueba', 220, 'SinImagen', 'ABC789', 30));
+//console.log(producto.deleteProduct(3));
+
+const productUpdated = {
+    id:2,
+    title:"Producto prueba modificado",
+    description:"Esto es un producto prueba en modificacion",
+    price:500,
+    thumbnail:"SinImagen",
+};
+
+//console.log(producto.updateProduct(2, productUpdated));
