@@ -1,20 +1,20 @@
 import express from 'express';
-import ProductManager from './productManager.js';
+import product from './routers/products_router.js';
+import cart from './routers/carts_router.js';
 
 const app = express();
 const PORT = 8080;
 
-app.get('/products', (req, res)=>{
-    const {limit}= req.query;
-    const p = new ProductManager();
-    res.json({productos: p.getProduct(limit)});
-});
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 
-app.get('/products/:pid', (req, res)=>{
-    const {pid} = req.params;
-    const p = new ProductManager();
-    res.json({productos: p.getProductById(pid)});
+app.get('/', (req, res)=>{
+    res.send('Primera Pre Entrega');
 });
+app.use('/api/products', product);
+app.use('/api/carts', cart);
+
+
 
 app.listen(PORT, ()=>{
     console.log(`Servidor abierto en el puerto ${PORT}`)

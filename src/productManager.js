@@ -44,9 +44,9 @@ class ProductManager{
         return id;
     }
 
-    addProduct(title, description, price, thumbnail, code, stock){
+    addProduct(title, description, price, thumbnail = [], code, stock, category, status = true){
 
-        if (title && description && price && thumbnail && code && stock){
+        if (title && description && price && code && stock && category){
             const codeRep = this.products.some(item => item.code === code)
             if(codeRep){
                 return `Este codigo ${code} ya esta asignado a otro producto, ingrese uno diferente`
@@ -60,14 +60,16 @@ class ProductManager{
                     price:price,
                     thumbnail:thumbnail,
                     code:code,
-                    stock:stock
+                    stock:stock,
+                    category:category,
+                    status
                 }
                 this.products.push(NewProduct);
                 this.#saveFile();
-                console.log('Producto agregado');
+                return'Producto agregado';
             }
         }else{
-            return `Todos los campos son obligatorios, intente de nuevo`
+            return `Todos los campos son obligatorios [title, description, price, code, stock, category], intente de nuevo`
         }
     }
 
@@ -97,9 +99,9 @@ class ProductManager{
             const {id, ...rest} = propsUpdate;
             this.products[index] = {...this.products[index], ...rest}
             this.#saveFile();
-            console.log('Producto actualizado');
+            return'Producto actualizado';
         }else {
-            console.log(`El producto con el id ${id} no existe`);
+            return `El producto con el id ${id} no existe`;
         }
 
 
@@ -112,9 +114,9 @@ class ProductManager{
         if (index >= 0){
             this.products = this.products.filter(item => item.id !== id);
             this.#saveFile();
-            console.log ('Producto eliminado')
+            return 'Producto eliminado';
         }else{
-            console.log(`El producto con el id ${id} no existe`)
+            return `El producto con el id ${id} no existe`;
         }
 
     }
