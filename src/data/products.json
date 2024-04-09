@@ -1,1 +1,46 @@
-[{"id":1,"title":"Producto de prueba 1","description":"Esto es un producto prueba","price":200,"thumbnail":"SinImagen","code":"ABC123","stock":25},{"id":2,"title":"Producto de prueba 2","description":"Esto es un producto prueba en modificacion","price":500,"thumbnail":"SinImagen","code":"ABC456","stock":35},{"id":3,"title":"Producto de prueba 3 modificado con postman","description":"Esto es un producto prueba","price":220,"thumbnail":"SinImagen","code":"ABC789","stock":30},{"id":4,"title":"Product 1.1","description":"Product added with postman","price":"500","thumbnail":[],"code":"EFG111","stock":"3","category":"test","status":true}]
+[
+    {
+        "id": 1,
+        "title": "Producto de prueba 1",
+        "description": "Esto es un producto prueba",
+        "price": 200,
+        "thumbnail": [],
+        "code": "ABC123",
+        "stock": 25,
+        "category": "test",
+        "status": true
+    },
+    {
+        "id": 2,
+        "title": "Producto de prueba 2",
+        "description": "Esto es un producto prueba en modificacion",
+        "price": 500,
+        "thumbnail": [],
+        "code": "ABC456",
+        "stock": 35,
+        "category": "test",
+        "status": true
+    },
+    {
+        "id": 3,
+        "title": "Producto de prueba 3 modificado con postman",
+        "description": "Esto es un producto prueba",
+        "price": 220,
+        "thumbnail": [],
+        "code": "ABC789",
+        "stock": 30,
+        "category": "test",
+        "status": true
+    },
+    {
+        "id": 4,
+        "title": "Product 1.1",
+        "description": "Product added with postman",
+        "price": "500",
+        "thumbnail": [],
+        "code": "EFG111",
+        "stock": "3",
+        "category": "test",
+        "status": true
+    }
+]

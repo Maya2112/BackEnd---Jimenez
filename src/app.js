@@ -17,5 +17,5 @@ app.use('/api/carts', cart);
 
 
 app.listen(PORT, ()=>{
-    console.log(`Servidor abierto en el puerto ${PORT}`)
+    console.log(`Servidor online en el puerto ${PORT}`)
 });
