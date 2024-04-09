@@ -10,9 +10,18 @@ router.get('/', (req, res)=>{
 });
 
 router.get('/:pid', (req, res)=>{
-    const {pid} = req.params;
-    const p = new ProductManager();
-    res.json({productos: p.getProductById(pid)});
+    try {
+        const {pid} = req.params;
+        const p = new ProductManager();
+        const product = p.getProductById(pid);
+        if (!product) {
+            res.status(404).json({error: 'Producto no encontrado'});
+        } else {
+            res.json({productos: product});
+        }
+        } catch (error) {
+            res.status(500).json({error: 'Hubo un error al procesar la solicitud'});
+        }
 });
 
 router.post('/', (req,res)=>{
@@ -23,17 +32,33 @@ router.post('/', (req,res)=>{
 });
 
 router.put('/:pid', (req,res)=>{
-    const {pid} = req.params;
-    const p = new ProductManager();
-    const result = p.updateProduct(Number(pid), req.body);
-    res.json({result});
+    try {
+        const {pid} = req.params;
+        const p = new ProductManager();
+        const result = p.updateProduct(Number(pid), req.body);
+        if (!result) {
+            res.status(404).json({error: 'Producto no encontrado'});
+        } else {
+            res.json({result});
+        }
+        } catch (error) {
+            res.status(500).json({error: 'Hubo un error al procesar la solicitud'});
+        }
 });
 
 router.delete('/:pid', (req,res)=>{
-    const {pid} = req.params;
-    const p = new ProductManager();
-    const result = p.deleteProduct(Number(pid));
-    res.json({result});
+    try {
+        const {pid} = req.params;
+        const p = new ProductManager();
+        const result = p.deleteProduct(Number(pid));
+        if (!result) {
+            res.status(404).json({error: 'Producto no encontrado'});
+        } else {
+            res.json({result});
+        }
+        } catch (error) {
+            res.status(500).json({error: 'Hubo un error al procesar la solicitud'});
+        }
 });
 
 export default router;

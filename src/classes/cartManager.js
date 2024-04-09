@@ -62,16 +62,19 @@ class CartManager{
 
     getCartById(id){
         id = Number(id);
-        const cartById= this.carts.find(item => item.id === id)
+        const cartById= this.carts.find(item => item.id === id);
+        let cartExist = false;
         if(cartById){
+            cartExist= true;
             return cartById;
         }else{
-            return `Product by id ${id} not found`;
+            return cartExist;
         }
 
     }
 
     addProductToCart(cid, pid){
+        let toCart = false;
         let msg = `El cart con id ${cid} no existe`;
         const  cartId= this.carts.find(itemC=>itemC.id===cid);
         const indexC = this.carts.indexOf(cartId);
@@ -80,20 +83,20 @@ class CartManager{
             const productInCart = this.carts[indexC].products.findIndex(itemP => itemP.id===pid);
             const p= new ProductManager();
             const product = p.getProductById(pid);
-            const pValue = Object.values(product);
-            const productAvail = pValue.includes(true);
             
-            if(productAvail && productInCart ===-1){
+            if(product.exist && productInCart ===-1){
                 this.carts[indexC].products.push({id:pid, 'quantity':1});
                 this.#saveFile();
+                toCart= true;
                 msg = `Producto con id ${pid} agregado al cart ${cid}`;
-            }else if(productAvail && productInCart !==-1){
+            }else if(product.exist && productInCart !==-1){
                 ++this.carts[indexC].products[productInCart].quantity;
                 this.#saveFile();
+                toCart= true;
                 msg = `Producto con id ${pid} incrementado en el cart ${cid}`;
             }
         }
-        return msg;
+        return {toCart, msg};
     }
 
 }

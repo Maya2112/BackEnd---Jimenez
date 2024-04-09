@@ -83,25 +83,30 @@ class ProductManager{
 
     getProductById(id){
         id = Number(id);
+        let exist = false;
         const productById= this.products.find(item => item.id === id);
         if(productById){
-            return productById;
+            exist = true;
+            return {exist, productById};
         }else{
-            return `El producto cn el id ${id} no existe` ;
+            return exist;
         }
 
     }
 
     updateProduct(id, propsUpdate){
         const index = this.products.findIndex(item => item.id === id);
+        let toUpdate= false;
 
         if(index >= 0){
+            toUpdate=true;
             const {id, ...rest} = propsUpdate;
-            this.products[index] = {...this.products[index], ...rest}
+            this.products[index] = {...this.products[index], ...rest};
             this.#saveFile();
-            return'Producto actualizado';
+            return `Producto actualizado`;
+            
         }else {
-            return `El producto con el id ${id} no existe`;
+            return toUpdate;
         }
 
 
@@ -110,13 +115,15 @@ class ProductManager{
     deleteProduct(id){
 
         const index = this.products.findIndex(item => item.id === id);
+        let toDelete= false;
 
         if (index >= 0){
+            toDelete=true;
             this.products = this.products.filter(item => item.id !== id);
             this.#saveFile();
             return 'Producto eliminado';
         }else{
-            return `El producto con el id ${id} no existe`;
+            return toDelete;
         }
 
     }
