@@ -3,11 +3,15 @@ import ProductManager from '../classes/productManager.js';
 
 const router = Router();
 
+const p = new ProductManager();
+
+
 router.get('/', (req, res)=>{
     const {limit}= req.query;
-    const p = new ProductManager();
     res.json({productos: p.getProduct(limit)});
 });
+
+
 
 router.get('/:pid', (req, res)=>{
     try {
@@ -24,17 +28,15 @@ router.get('/:pid', (req, res)=>{
         }
 });
 
+
 router.post('/', (req,res)=>{
-    const {title, description, price, thumbnail, code, stock, category, status} = req.body;
-    const p = new ProductManager();
-    const result = p.addProduct(title, description, price, thumbnail, code, stock, category, status);
+    const result = p.addProduct(...req.body);
     res.json({result});
 });
 
 router.put('/:pid', (req,res)=>{
     try {
         const {pid} = req.params;
-        const p = new ProductManager();
         const result = p.updateProduct(Number(pid), req.body);
         if (!result) {
             res.status(404).json({error: 'Producto no encontrado'});
@@ -49,7 +51,6 @@ router.put('/:pid', (req,res)=>{
 router.delete('/:pid', (req,res)=>{
     try {
         const {pid} = req.params;
-        const p = new ProductManager();
         const result = p.deleteProduct(Number(pid));
         if (!result) {
             res.status(404).json({error: 'Producto no encontrado'});

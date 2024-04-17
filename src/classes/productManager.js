@@ -44,7 +44,7 @@ class ProductManager{
         return id;
     }
 
-    addProduct(title, description, price, thumbnail = [], code, stock, category, status = true){
+    addProduct({title, description, price, thumbnail = [], code, stock, category, status = true}){
 
         if (title && description && price && code && stock && category && status){
             const codeRep = this.products.some(item => item.code === code)
