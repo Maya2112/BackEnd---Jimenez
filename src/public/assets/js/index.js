@@ -7,6 +7,7 @@ socket.on('productos', productos=>{
     productos.forEach(producto=>{
 
         let itemLista = document.createElement("li"); // Crea un elemento <li>
+        itemLista.classList.add();
         itemLista.innerHTML= `-id: ${producto.id} <br> -Title: ${producto.title}<br> -Description: ${producto.description}<br> -Price: ${producto.price}<br> -Code: ${producto.code}<br> -Stock: ${producto.stock}<br> -Category:
         ${producto.category}<br> -Status: ${producto.status}<br><br>`;
         Plist.appendChild(itemLista);
@@ -36,5 +37,7 @@ AddForm.addEventListener('submit', function (event){
     };
 
     socket.emit('agregarProducto', producto);
-    AddForm.requestFullscreen();
-})
+    AddForm.reset();
+    
+});
+

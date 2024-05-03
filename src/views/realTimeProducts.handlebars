@@ -2,7 +2,7 @@
     <h1>Real time view Products</h1>
 
     <h2>Lista de Productos:</h2>
-    <ul id="ProductList">
+    <ul class="flex flex-wrap justify-items-center" id="ProductList">
     </ul>
     <br><br>
 
@@ -10,11 +10,11 @@
 
 <di>
     <h2>Agregar Producto</h2>
-    <form id="AddForm">
+    <form  id="AddForm" action="/realtimeproducts" method="post">
         <input id= "title" type="text" name="Title" placeholder="Product title">
         <input id= "description" type="text" name="Description" placeholder="Porduct description">
         <input id= "price" type="number" name="Price" placeholder="Porduct price">
-        <input id= "code" type="number" name="Code" placeholder="Porduct code">
+        <input id= "code" type="text" name="Code" placeholder="Porduct code">
         <input id= "stock" type="number" name="Stock" placeholder="Porduct stock">
         <input id= "category" type="text" name="Category" placeholder="Porduct category">
         <button type="submit">Agregar</button>
