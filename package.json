@@ -17,7 +17,8 @@
     "handlebars": "^4.7.8",
     "mongoose": "^8.3.3",
     "nodemon": "^3.1.0",
-    "socket.io": "^4.7.5"
+    "socket.io": "^4.7.5",
+    "sweetalert2": "^11.10.8"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.19",

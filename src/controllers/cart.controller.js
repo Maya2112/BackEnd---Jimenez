@@ -20,7 +20,8 @@ export const createCart = async (req = request, res = response)=>{
     try{
         const cart = await cartModel.create({});
         res.json({msg: 'Carrito creado', cart});
-    }catch{
+    }catch (error){
+        console.log(`createCart error: ${error}`);
         res.status(500).json({error: 'Hubo un error al procesar la solicitud'});
     }
 }
@@ -42,7 +43,7 @@ export const addProductToCart = async (req = request, res = response)=>{
         }
         cart.save();
         res.json({msg: 'Carrito actualizado', cart});
-    }catch{
+    }catch(error){
         res.status(500).json({error: 'Hubo un error al procesar la solicitud'});
     }
 }

@@ -7,9 +7,12 @@ socket.on('productos', productos=>{
     productos.forEach(producto=>{
 
         let itemLista = document.createElement("li"); // Crea un elemento <li>
-        itemLista.classList.add();
-        itemLista.innerHTML= `-id: ${producto.id} <br> -Title: ${producto.title}<br> -Description: ${producto.description}<br> -Price: ${producto.price}<br> -Code: ${producto.code}<br> -Stock: ${producto.stock}<br> -Category:
+        let itemP = document.createElement("p");
+        itemLista.classList.add("flex", "border-2", "rounded", "shadow-lg", "p-3", "items-center", "justify-center");
+        itemP.classList.add("border", "rounded", "bg-teal-800", "p-2", "font-medium", "text-base");
+        itemP.innerHTML= `-id: ${producto._id} <br> -Title: ${producto.title}<br> -Description: ${producto.description}<br> -Price: ${producto.price}<br> -Code: ${producto.code}<br> -Stock: ${producto.stock}<br> -Category:
         ${producto.category}<br> -Status: ${producto.status}<br><br>`;
+        itemLista.appendChild(itemP);
         Plist.appendChild(itemLista);
         
     })
