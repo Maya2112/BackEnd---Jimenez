@@ -2,15 +2,16 @@ import express from 'express';
 import {engine} from 'express-handlebars';
 import {Server} from 'socket.io';
 import __dirname from './utils.js';
+import 'dotenv/config';
 import productRouter from './routers/products_router.js';
 import viewsRouter  from './routers/views_router.js'
 import cart from './routers/carts_router.js';
 import { dbConnection } from './database/config.js';
-import { productModel } from './models/products.js';
 import { messageModel } from './models/messages.js';
+import { addProductService, getProductsService } from './services/product_service.js';
 
 const app = express();
-const PORT = 8080;
+const PORT = process.env.PORT;
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
@@ -32,17 +33,21 @@ const socketServer = new Server (serverHTTP);
 
 socketServer.on('connection', async (socket)=>{
 
-    const productos = await productModel.find();
-    socket.emit('productos', productos);
+    //Productos
+    const {payload} = await getProductsService({});
+    const productos = payload;
+    socket.emit('productos', payload);
 
     socket.on('agregarProducto', async (producto) =>{
-        const newProduct = await productModel.create({...producto});
+        //const newProduct = await productModel.create({...producto});
+        const newProduct = await addProductService({...producto});
         if(newProduct){
             productos.push(newProduct);
             socket.emit('productos', productos);
         }
     });
 
+    //Chat
     const messages = await messageModel.find();
     socket.emit('message',messages);
 

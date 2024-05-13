@@ -1,10 +1,10 @@
 import {request, response} from 'express';
-import {cartModel} from '../models/carts.js';
+import { addProductToCartService, createCartService, deleteCartProductService, getCartByIdService, updateCartProductService, deleteAllProductCartService } from '../services/cart_service.js';
 
 export const getCartById = async (req = request, res = response)=>{
     try{
         const {cid} = req.params;
-        const cart = await cartModel.findById(cid);
+        const cart = await getCartByIdService(cid);
 
         if (!cart) {
             res.status(404).json({error: 'Carrito no encontrado'});
@@ -18,7 +18,7 @@ export const getCartById = async (req = request, res = response)=>{
 
 export const createCart = async (req = request, res = response)=>{
     try{
-        const cart = await cartModel.create({});
+        const cart = await createCartService();
         res.json({msg: 'Carrito creado', cart});
     }catch (error){
         console.log(`createCart error: ${error}`);
@@ -29,21 +29,62 @@ export const createCart = async (req = request, res = response)=>{
 export const addProductToCart = async (req = request, res = response)=>{
     try{
         const {cid, pid}=req.params;
-        const cart = await cartModel.findById(cid);
+        const cart = await addProductToCartService(cid, pid);
 
-        if (!cart){
+        if (!cart)
             res.status(404).json({error: 'El carrito no existe'});
-        }else{
-            const productExist= cart.products.find(p=>p.id.toString() === pid);
-            if(productExist){
-                productExist.quantity++;
-            }else{
-                cart.products.push({id: pid, quantity:1});
-            }
-        }
-        cart.save();
         res.json({msg: 'Carrito actualizado', cart});
     }catch(error){
+        res.status(500).json({error: 'Hubo un error al procesar la solicitud'});
+    }
+}
+
+export const deleteCartProduct = async (req = request, res = response) =>{
+    try{
+        const {cid, pid}= req.params;
+        const cart = await deleteCartProductService(cid, pid);
+        
+        if(!cart)
+            res.status(404).json({msg: 'Es posible que el carrito o producto seleccionad no exista'});
+        
+        res.json ({msg:'Se elimino el producto del carrito', cart})
+    
+    }catch (error){
+        res.status(500).json({error: 'Hubo un error al procesar la solicitud'});
+    }
+}
+
+export const updateCartProduct = async (req = request, res = response) =>{
+    try{
+        const {cid, pid}= req.params;
+        const {quantity} = req.body;
+
+        if(!quantity || !Number.isInteger(quantity))
+            res.status(404).json({msg:'La cantidad debe ser un valor numerico'});
+
+        const cart = await updateCartProductService(cid, pid, quantity);
+        
+        if(!cart)
+            res.status(404).json({msg: 'Es posible que el carrito o producto seleccionado no exista'});
+        
+        res.json ({msg:'Producto actualizado en el carrito', cart})
+    
+    }catch (error){
+        res.status(500).json({error: 'Hubo un error al procesar la solicitud'});
+    }
+}
+
+export const deleteAllProductCart = async (req = request, res = response) =>{
+    try{
+        const {cid}= req.params;
+        const cart = await deleteAllProductCartService(cid);
+        
+        if(!cart)
+            res.status(404).json({msg: 'Es posible que el carrito no exista'});
+        
+        res.json ({msg:'Producto actualizado en el carrito', cart})
+    
+    }catch (error){
         res.status(500).json({error: 'Hubo un error al procesar la solicitud'});
     }
 }

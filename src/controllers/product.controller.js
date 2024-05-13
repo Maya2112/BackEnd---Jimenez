@@ -1,13 +1,12 @@
 import {request, response} from 'express';
-import {productModel} from '../models/products.js'
+import { deleteProductService, getProductByIdService, getProductsService, updateProductService, addProductService} from '../services/product_service.js';
 
 export const getProducts = async (req = request, res = response)=>{
     try{
-        const {limit}= req.query;
-        const product = await productModel.find().limit(Number(limit));
-        res.json({product});
-    }catch{
-        console.log(`getProducts error: ${error}`);
+        const result = await getProductsService({...req.query});
+        res.json({result});
+    }catch (error){
+        console.log('getproduct', error)
         res.status(500).json({msg:'Contactar al administrador'});
     }
 }
@@ -15,7 +14,7 @@ export const getProducts = async (req = request, res = response)=>{
 export const getProductById = async (req = request, res = response)=>{
     try {
         const {pid} = req.params;
-        const product = await productModel.findById(pid);
+        const product = await getProductByIdService(pid);
         if (!product) {
             res.status(404).json({error: 'Producto no encontrado'});
         } else {
@@ -33,11 +32,10 @@ export const addProduct = async (req = request, res = response)=>{
         if (!title, !description, !price, !code, !category, !stock) {
             res.status(404).json({error: 'Todos los campos son obligatorios'});
         } else {
-            const product = await productModel.create({title, description, price, thumbnail, code, stock, category, status});
+            const product = await addProductService({...req.body})
             res.json({product});
         }
         } catch (error) {
-            console.log(`addProduct error: ${error}`);
             res.status(500).json({error: 'Hubo un error al procesar la solicitud'});
         }
 }
@@ -46,7 +44,7 @@ export const updateProduct = async (req = request, res = response)=>{
     try {
         const {pid} = req.params;
         const {_id, ...rest}= req.body;
-        const product = await productModel.findByIdAndUpdate(pid, {...rest}, {new: true});
+        const product = await updateProductService(pid, rest);
         if (!product) {
             res.status(404).json({error: 'Producto no encontrado'});
         } else {
@@ -54,7 +52,6 @@ export const updateProduct = async (req = request, res = response)=>{
             res.json({product});
         }
         } catch (error) {
-            console.log(`updateProduct error: ${error}`);
             res.status(500).json({error: 'Hubo un error al procesar la solicitud'});
         }
 }
@@ -62,7 +59,7 @@ export const updateProduct = async (req = request, res = response)=>{
 export const deleteProduct = async (req = request, res = response)=>{
     try {
         const {pid} = req.params;
-        const product = await productModel.findByIdAndDelete(pid);
+        const product = await deleteProductService(pid);
         if (!product) {
             res.status(404).json({error: 'Producto no encontrado'});
         } else {
@@ -70,7 +67,6 @@ export const deleteProduct = async (req = request, res = response)=>{
             res.json({product});
         }
         } catch (error) {
-            console.log(`deleteProduct error: ${error}`);
             res.status(500).json({error: 'Hubo un error al procesar la solicitud'});
         }
 }
