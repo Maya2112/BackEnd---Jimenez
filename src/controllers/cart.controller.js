@@ -1,9 +1,15 @@
 import {request, response} from 'express';
 import { addProductToCartService, createCartService, deleteCartProductService, getCartByIdService, updateCartProductService, deleteAllProductCartService } from '../services/cart_service.js';
+import { isValidObjectId } from 'mongoose';
 
 export const getCartById = async (req = request, res = response)=>{
     try{
         const {cid} = req.params;
+
+        if (!isValidObjectId(cid)) {
+            return res.status(400).json({error: 'ID de producto no válido'});
+        }
+
         const cart = await getCartByIdService(cid);
 
         if (!cart) {
@@ -29,6 +35,10 @@ export const createCart = async (req = request, res = response)=>{
 export const addProductToCart = async (req = request, res = response)=>{
     try{
         const {cid, pid}=req.params;
+
+        if (!isValidObjectId(cid) && !isValidObjectId(pid)) {
+            return res.status(400).json({error: 'ID de producto  carrito no válido'});
+        }
         const cart = await addProductToCartService(cid, pid);
 
         if (!cart)
@@ -42,6 +52,11 @@ export const addProductToCart = async (req = request, res = response)=>{
 export const deleteCartProduct = async (req = request, res = response) =>{
     try{
         const {cid, pid}= req.params;
+
+        if (!isValidObjectId(cid) && !isValidObjectId(pid)) {
+            return res.status(400).json({error: 'ID de producto  carrito no válido'});
+        }
+
         const cart = await deleteCartProductService(cid, pid);
         
         if(!cart)
@@ -58,6 +73,10 @@ export const updateCartProduct = async (req = request, res = response) =>{
     try{
         const {cid, pid}= req.params;
         const {quantity} = req.body;
+
+        if (!isValidObjectId(cid) && !isValidObjectId(pid)) {
+            return res.status(400).json({error: 'ID de producto  carrito no válido'});
+        }
 
         if(!quantity || !Number.isInteger(quantity))
             res.status(404).json({msg:'La cantidad debe ser un valor numerico'});
@@ -77,6 +96,11 @@ export const updateCartProduct = async (req = request, res = response) =>{
 export const deleteAllProductCart = async (req = request, res = response) =>{
     try{
         const {cid}= req.params;
+
+        if (!isValidObjectId(cid)) {
+            return res.status(400).json({error: 'ID de producto  carrito no válido'});
+        }
+        
         const cart = await deleteAllProductCartService(cid);
         
         if(!cart)

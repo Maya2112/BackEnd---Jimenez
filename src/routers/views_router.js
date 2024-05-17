@@ -1,40 +1,26 @@
 import {Router} from 'express';
 import { addProduct } from '../controllers/product.controller.js';
-import { getProductsService } from '../services/product_service.js';
-import {getCartByIdService} from '../services/cart_service.js'
+import { cartView, chatView, homeView, logOut, loginPost, loginView, productsView, realTimeView, registerPost, registerView } from '../controllers/views.controller.js';
+import { auth } from '../middleware/auth.js';
 
 const router = Router();
 
-router.get('/', async (req, res)=>{
-    const {payload} = await getProductsService({});
-    res.setHeader('Content-Type','text/html');
-    res.status(200).render('home', {productos:payload, title: 'Productos'});
-});
-
-router.get('/realtimeproducts', (req, res)=>{
-    res.setHeader('Content-Type','text/html');
-    res.status(200).render('realTimeProducts', {title: 'Real time products'});
-});
-
+router.get('/', homeView);
+router.get('/realtimeproducts', auth, realTimeView);
 /*router.post('/realtimeproducts', async (req,res)=>{
     const result = addProduct;
     res.json({result});
 });*/
+router.get('/chat', auth, chatView);
+router.get('/products', auth, productsView);
+router.get('/cart/:cid', auth, cartView);
 
-router.get('/chat', (req, res)=>{
-    res.setHeader('Content-Type','text/html');
-    res.status(200).render('chat', {title: 'Chat'});
-});
+router.get('/login', loginView);
+router.post('/login', loginPost);
 
-router.get('/products', async (req, res)=>{
-    const result = await getProductsService({...req.query});
-    return res.render('products', {title: 'productos', result});
-});
+router.get('/register', registerView);
+router.post('/register', registerPost);
 
-router.get('/cart/:cid', async (req, res)=>{
-    const {cid}=req.params;
-    const cart = await getCartByIdService(cid);
-    res.render('cart', {title: 'cart', cart});
-});
+router.get('/logout', logOut);
 
 export default router;

@@ -14,16 +14,20 @@ export const getProducts = async (req = request, res = response)=>{
 export const getProductById = async (req = request, res = response)=>{
     try {
         const {pid} = req.params;
+        if (!isValidObjectId(pid)) {
+            return res.status(400).json({error: 'ID de producto no válido'});
+        }
+
         const product = await getProductByIdService(pid);
+        
         if (!product) {
             res.status(404).json({error: 'Producto no encontrado'});
         } else {
             res.json({product});
         }
-        } catch (error) {
-            console.log(`getProductById error: ${error}`);
-            res.status(500).json({error: 'Hubo un error al procesar la solicitud'});
-        }
+    } catch (error) {
+        res.status(500).json({error: 'Hubo un error al procesar la solicitud'});
+    }
 }
 
 export const addProduct = async (req = request, res = response)=>{
@@ -44,7 +48,13 @@ export const updateProduct = async (req = request, res = response)=>{
     try {
         const {pid} = req.params;
         const {_id, ...rest}= req.body;
+
+        if (!isValidObjectId(pid)) {
+            return res.status(400).json({error: 'ID de producto no válido'});
+        }
+
         const product = await updateProductService(pid, rest);
+        
         if (!product) {
             res.status(404).json({error: 'Producto no encontrado'});
         } else {
@@ -59,7 +69,13 @@ export const updateProduct = async (req = request, res = response)=>{
 export const deleteProduct = async (req = request, res = response)=>{
     try {
         const {pid} = req.params;
+
+        if (!isValidObjectId(pid)) {
+            return res.status(400).json({error: 'ID de producto no válido'});
+        }
+
         const product = await deleteProductService(pid);
+        
         if (!product) {
             res.status(404).json({error: 'Producto no encontrado'});
         } else {

@@ -52,10 +52,10 @@ export const getProductsService = async ({limit = 10, page = 1, sort, query})=>{
 export const getProductByIdService = async (pid)=>{
     try {
         return await productModel.findById(pid);
-        } catch (error) {
-            console.log(`getProductByIdService error: ${error}`);
-            throw error;
-        }
+    } catch (error) {
+        console.log(`getProductByIdService error: ${error}`);
+        throw error;
+    }
 }
 
 export const addProductService = async ({title, description, price, thumbnail, code, stock, category, status})=>{

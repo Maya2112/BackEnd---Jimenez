@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 
-
 export const dbConnection = async() => {
     try {
         await mongoose.connect(process.env.URI_ECOMMERCE_MONGODB, {dbName:process.env.DB_NAME});

@@ -2,7 +2,10 @@ import express from 'express';
 import {engine} from 'express-handlebars';
 import {Server} from 'socket.io';
 import __dirname from './utils.js';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
 import 'dotenv/config';
+
 import productRouter from './routers/products_router.js';
 import viewsRouter  from './routers/views_router.js'
 import cart from './routers/carts_router.js';
@@ -16,6 +19,16 @@ const PORT = process.env.PORT;
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(express.static(__dirname + '/public'));
+
+app.use(session({
+    store: MongoStore.create({
+        mongoUrl: `${process.env.URI_ECOMMERCE_MONGODB}/${process.env.DB_NAME}`,
+        ttl: 3600
+    }),
+    secret: process.env.SECRET_SESSION,
+    saveUninitialized: true,
+    resave: false,
+}));
 
 app.engine("handlebars", engine());
 app.set("view engine", "handlebars");
@@ -34,12 +47,12 @@ const socketServer = new Server (serverHTTP);
 socketServer.on('connection', async (socket)=>{
 
     //Productos
-    const {payload} = await getProductsService({});
+    const limit = 50;
+    const {payload} = await getProductsService({limit});
     const productos = payload;
     socket.emit('productos', payload);
 
     socket.on('agregarProducto', async (producto) =>{
-        //const newProduct = await productModel.create({...producto});
         const newProduct = await addProductService({...producto});
         if(newProduct){
             productos.push(newProduct);
