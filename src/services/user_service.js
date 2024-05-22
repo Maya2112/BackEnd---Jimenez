@@ -1,5 +1,15 @@
 import {userModel} from '../models/user.js'
 
+export const getUserById = async (id) =>{
+
+    try{
+        return await userModel.findById(id);
+    }catch (error){
+        console.log('getUserById error:', error);
+        throw error;
+    }
+};
+
 export const getUserEmail = async (email) =>{
 
     try{
@@ -10,7 +20,7 @@ export const getUserEmail = async (email) =>{
     }
 };
 
-export const regiterUser = async (user) =>{
+export const registerUser = async (user) =>{
 
     try{
         return await userModel.create({...user});
