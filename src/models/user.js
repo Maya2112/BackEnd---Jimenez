@@ -9,6 +9,7 @@ const userSchema = new Schema ({
     password: {type: String, required: [true, 'Debes crear una contraseña']},
     rol: {type: String, default: 'user', enum:['user', 'admin']},
     status: {type: Boolean, default: true},
+    cart:{type:Schema.Types.ObjectId, ref:'Cart'},
     creationDate: {type: Date, default: Date.now},
     gitHub: {type: Boolean, default: false}
 });
