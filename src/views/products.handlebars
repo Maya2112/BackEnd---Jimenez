@@ -30,7 +30,9 @@
 
 <script>
     function addToCart(productId){
-        const cartId= '663ad3e7f12d12e384cd4eec';
+        const cartId='668601f595a63bc4f63fe444';
+        const test1= productId
+        console.log(test1);
         fetch(`/api/cart/${cartId}/products/${productId}`, {
             method: 'POST',
             headers:{

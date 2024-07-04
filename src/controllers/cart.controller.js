@@ -1,13 +1,14 @@
 import {request, response} from 'express';
 import { addProductToCartService, createCartService, deleteCartProductService, getCartByIdService, updateCartProductService, deleteAllProductCartService } from '../services/cart_service.js';
 import { isValidObjectId } from 'mongoose';
+import { generateTicketService } from '../services/ticket_service.js';
 
 export const getCartById = async (req = request, res = response)=>{
     try{
         const {cid} = req.params;
 
         if (!isValidObjectId(cid)) {
-            return res.status(400).json({error: 'ID de producto no válido'});
+            return res.status(400).json({error: 'ID no válido'});
         }
 
         const cart = await getCartByIdService(cid);
@@ -111,4 +112,32 @@ export const deleteAllProductCart = async (req = request, res = response) =>{
     }catch (error){
         res.status(500).json({error: 'Hubo un error al procesar la solicitud'});
     }
+}
+
+export const finishPurchase = async (req = request, res = response) => {
+    try{
+        
+        const pucharser = req.user.name;
+        console.log(pucharser);
+        const {cid} = req.params;
+        
+
+        if (!isValidObjectId(cid)) {
+            console.log('valide el carro');
+            return res.status(400).json({error: 'ID de producto o carrito no válido'});
+        }
+
+        const cart = await getCartByIdService(cid);
+    
+        if(!cart)
+            res.status(404).json({msg: 'Hay un problema con el carrito'});
+
+        console.log('valide el carro');
+
+        const purchase = await generateTicketService(cid, pucharser);
+
+        res.json({msg:'Compra finalizada', purchase});
+        }catch(error){
+            res.status(500).json({error: 'Hubo un error al procesar la solicitud'});
+        }
 }

@@ -38,7 +38,7 @@ export const cartView = async (req = request, res = response)=>{
 
 export const loginView = async (req= request, res = response)=>{
     if(req.session.user)
-        return res.redirect('/');
+        return res.redirect('/products');
 
     res.render('login', {title: 'Login'});
 };
@@ -55,7 +55,7 @@ export const Login = async (req= request, res = response)=>{
         rol: req.user.rol
     };
 
-    return res.redirect('/');
+    return res.redirect('/products');
 };
 
 export const logOut = async (req= request, res = response)=>{

@@ -23,6 +23,7 @@ export const getUserEmail = async (email) =>{
 export const registerUser = async (user) =>{
 
     try{
+        
         return await userModel.create({...user});
     }catch (error){
         console.log('registerUser error:', error);

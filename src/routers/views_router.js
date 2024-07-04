@@ -6,7 +6,7 @@ import { auth, admin } from '../middleware/auth.js';
 const router = Router();
 
 router.get('/', homeView);
-router.get('/realtimeproducts', [auth, admin], realTimeView);
+router.get('/realtimeproducts', admin, realTimeView);
 /*router.post('/realtimeproducts', async (req,res)=>{
     const result = addProduct;
     res.json({result});

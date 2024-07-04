@@ -4,6 +4,7 @@ import local from 'passport-local';
 import GitHubStrategy from 'passport-github2';
 import { getUserById, getUserEmail, registerUser } from '../services/user_service.js';
 import { isValidPassword, createHash } from '../utils/bcryptPassword.js';
+import { createCartService } from '../services/cart_service.js';
 
 const localStrategy = local.Strategy;
 
@@ -27,6 +28,12 @@ export const initializaPassport = () =>{
             }
 
             req.body.password = createHash(password);
+
+            const newCart = await createCartService();
+
+            if(!newCart) return res.status(500).json({msg:'No se pudo crear el carrito'});
+
+            req.body.cart= newCart._id;
 
             const newUser = await registerUser({...req.body});
 
