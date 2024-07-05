@@ -51,7 +51,7 @@ export const generateTicketService = async (cid, purchaser)=> {
     let ticket;
     let { WithStock, WithoutStock, total } = await validateTicketService(cid);
     if (WithStock.length >= 1) {
-        ticket = await createTicket(total, purchaser, WithStock);
+        ticket = await createTicketService(total, purchaser, WithStock);
     }
     console.log(WithStock);
     let newCart = await getCartByIdService(cid);

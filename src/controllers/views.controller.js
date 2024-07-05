@@ -4,7 +4,7 @@ import {getCartByIdService} from '../services/cart_service.js'
 
 export const homeView = async (req = request, res=response)=>{
 
-    const limit= 50;
+    const limit= 10;
     const {payload} = await getProductsService({limit});
     const user = req.session.user;
     res.setHeader('Content-Type','text/html');
@@ -82,3 +82,13 @@ export const registerPost = async (req= request, res = response)=>{
 
     res.redirect('/login');
 };
+
+export const purchaseView = async (req = request, res = response)=> {
+    const user = req.session.user;
+    if(!user)
+        res.redirect('/login');
+
+    res.render('ticket', {title: 'Ticket'});
+
+
+}

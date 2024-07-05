@@ -117,22 +117,14 @@ export const deleteAllProductCart = async (req = request, res = response) =>{
 export const finishPurchase = async (req = request, res = response) => {
     try{
         
-        const pucharser = req.user.name;
+        const pucharser = req.session.user.name;
         console.log(pucharser);
         const {cid} = req.params;
         
 
         if (!isValidObjectId(cid)) {
-            console.log('valide el carro');
-            return res.status(400).json({error: 'ID de producto o carrito no válido'});
+            return res.status(400).json({error: 'ID de carrito no válido'});
         }
-
-        const cart = await getCartByIdService(cid);
-    
-        if(!cart)
-            res.status(404).json({msg: 'Hay un problema con el carrito'});
-
-        console.log('valide el carro');
 
         const purchase = await generateTicketService(cid, pucharser);
 

@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import passport from 'passport';
-import { cartView, chatView, homeView, logOut, Login, loginView, productsView, realTimeView, registerPost, registerView } from '../controllers/views.controller.js';
+import { cartView, chatView, homeView, logOut, Login, loginView, productsView, realTimeView, registerPost, registerView, purchaseView } from '../controllers/views.controller.js';
 import { auth, admin } from '../middleware/auth.js';
 
 const router = Router();
@@ -14,6 +14,7 @@ router.get('/realtimeproducts', admin, realTimeView);
 router.get('/chat', auth, chatView);
 router.get('/products', auth, productsView);
 router.get('/cart/:cid', auth, cartView);
+router.get('/purchase', auth, purchaseView);
 
 router.get('/login', loginView);
 router.get('/register', registerView);
