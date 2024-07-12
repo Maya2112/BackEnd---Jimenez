@@ -5,7 +5,7 @@
     <ul class="flex flex-wrap gap-5 justify-center">
         {{#each result.payload}}
             <li class="flex flex-col border-2 rounded shadow-lg p-3 gap-4 items-center justify-center"><p class="border rounded bg-teal-800 p-2 font-medium text-base"> -id: {{_id}} <br> -Title: {{title}}<br> -Description: {{description}}<br> -Price: {{price}}<br> -Code: {{code}}<br> -Stock: {{stock}}<br> -Category:
-            {{category}}<br> -Status: {{status}}<br><br></p> <button class="opacity-50 hover:opacity-100" onClick="addToCart('{{this._id}}')"><i class="fa-solid fa-cart-arrow-down fa-2xl"></i></img></button></li>
+            {{category}}<br> -Status: {{status}}<br><br></p> <button class="opacity-50 hover:opacity-100" onClick="addToCart('{{this._id}}')"><i class="fa-solid fa-cart-arrow-down fa-2xl"></i></button></li>
         {{/each}}
     </ul>
     <br><br>
@@ -30,7 +30,7 @@
 
 <script>
     function addToCart(productId){
-        const cartId='668601f595a63bc4f63fe444';
+        const cartId='668f1ce38d33074546b0688c';
         fetch(`/api/cart/${cartId}/products/${productId}`, {
             method: 'POST',
             headers:{

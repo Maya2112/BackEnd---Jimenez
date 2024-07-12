@@ -52,6 +52,7 @@ export const Login = async (req= request, res = response)=>{
         name : req.user.name,
         lastName: req.user.lastName,
         email: req.user.email,
+        cart: req.user.cart,
         rol: req.user.rol
     };
 

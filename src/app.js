@@ -5,6 +5,7 @@ import __dirname from './utils.js';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import passport from 'passport';
+import cookieParser from 'cookie-parser';
 import 'dotenv/config';
 
 import productRouter from './routers/products_router.js';
@@ -37,6 +38,7 @@ initializaPassport();
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(cookieParser());
 
 app.engine("handlebars", engine());
 app.set("view engine", "handlebars");
