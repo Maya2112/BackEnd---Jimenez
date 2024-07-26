@@ -15,6 +15,8 @@ import { dbConnection } from './database/config.js';
 import { messageModel } from './models/messages.js';
 import { addProductService, getProductsService } from './services/product_service.js';
 import { initializaPassport } from './config/passport.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import { logger, middLogger, loggerRoute } from "./utils/logger.js";
 
 const app = express();
 const PORT = process.env.PORT;
@@ -38,6 +40,7 @@ initializaPassport();
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(middLogger);
 app.use(cookieParser());
 
 app.engine("handlebars", engine());
@@ -48,10 +51,12 @@ app.use('/', viewsRouter);
 app.use('/api/products', productRouter);
 app.use('/api/realTimeProducts', productRouter);
 app.use('/api/carts', cart);
+app.use("/loggerTest", loggerRoute);
+app.use(errorHandler);
 
 await dbConnection();
 
-const serverHTTP= app.listen(PORT, ()=>{console.log(`Servidor online en el puerto ${PORT}`)});
+const serverHTTP= app.listen(PORT, ()=>{logger.info(`Servidor online en el puerto ${PORT}`)});
 const socketServer = new Server (serverHTTP);
 
 socketServer.on('connection', async (socket)=>{
@@ -83,4 +88,5 @@ socketServer.on('connection', async (socket)=>{
     });
 
     socket.broadcast.emit('newUser');
-})
+});
+

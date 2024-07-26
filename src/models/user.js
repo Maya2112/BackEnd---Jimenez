@@ -14,9 +14,4 @@ const userSchema = new Schema ({
     gitHub: {type: Boolean, default: false}
 });
 
-userSchema.pre('find', function(){
-
-    this.populate('cart');
-})
-
 export const userModel = model (collectionName, userSchema);

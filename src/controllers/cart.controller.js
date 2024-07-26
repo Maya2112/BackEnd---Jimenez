@@ -5,11 +5,16 @@ import {validateTicketService} from '../helpers/ticketHelper.js'
 import {createTicketService} from '../services/ticket_service.js'
 import {CustomError} from '../utils/errorCustomizer.js'
 import { errorDictionary } from '../utils/errorDictionary.js';
+import { enviarMail } from '../utils.js';
 
 
-export const getCartById = async (req = request, res = response)=>{
+export const getCartById = async (req = request, res = response, next)=>{
     try{
-        const {cid} = req.session.user.cart;
+        const {test}= req.session?.user;
+        const {cid} = req.session?.user.cart;
+
+        if (!test || !cid)
+            console.log('no hay user, session o cart');
 
         if (!isValidObjectId(cid)) {
             CustomError.createError(
@@ -33,12 +38,7 @@ export const getCartById = async (req = request, res = response)=>{
             res.json({cart});
         }
     } catch (error) {
-        return CustomError.createError(
-            "ERROR",
-            null,
-            "Internal server error",
-            errorDictionary.INTERNAL_SERVER_ERROR);
-            //res.status(500).json({error: 'Hubo un error al procesar la solicitud'});
+        next(error);
     }
 }
 
@@ -52,7 +52,7 @@ export const getCartById = async (req = request, res = response)=>{
     }
 }*/
 
-export const addProductToCart = async (req = request, res = response)=>{
+export const addProductToCart = async (req = request, res = response, next)=>{
     try{
         const {cid, pid}=req.params;
 
@@ -75,16 +75,17 @@ export const addProductToCart = async (req = request, res = response)=>{
             //res.status(404).json({error: 'El carrito no existe'});
         res.json({msg: 'Carrito actualizado', cart});
     }catch(error){
-        return CustomError.createError(
+        next(error);
+        /*return CustomError.createError(
             "ERROR",
             null,
             "Internal server error",
-            errorDictionary.INTERNAL_SERVER_ERROR);
+            errorDictionary.INTERNAL_SERVER_ERROR);*/
         //res.status(500).json({error: 'Hubo un error al procesar la solicitud'});
     }
 }
 
-export const deleteCartProduct = async (req = request, res = response) =>{
+export const deleteCartProduct = async (req = request, res = response, next) =>{
     try{
         const {cid, pid}= req.params;
 
@@ -110,16 +111,17 @@ export const deleteCartProduct = async (req = request, res = response) =>{
         res.json ({msg:'Se elimino el producto del carrito', cart})
     
     }catch (error){
-        return CustomError.createError(
-            "Error",
+        next(error);
+        /*return CustomError.createError(
+            "ERROR",
             null,
-            "Internal server Error",
-            errorDictionary.INTERNAL_SERVER_ERROR);
+            "Internal server error",
+            errorDictionary.INTERNAL_SERVER_ERROR);*/
         //res.status(500).json({error: 'Hubo un error al procesar la solicitud'});
     }
 }
 
-export const updateCartProduct = async (req = request, res = response) =>{
+export const updateCartProduct = async (req = request, res = response, next) =>{
     try{
         const {cid, pid}= req.params;
         const {quantity} = req.body;
@@ -154,11 +156,11 @@ export const updateCartProduct = async (req = request, res = response) =>{
         res.json ({msg:'Producto actualizado en el carrito', cart})
     
     }catch (error){
-        res.status(500).json({error: 'Hubo un error al procesar la solicitud'});
+        next(error);
     }
 }
 
-export const deleteAllProductCart = async (req = request, res = response) =>{
+export const deleteAllProductCart = async (req = request, res = response, next) =>{
     try{
         const {cid}= req.params;
 
@@ -184,31 +186,58 @@ export const deleteAllProductCart = async (req = request, res = response) =>{
         res.json ({msg:'Producto actualizado en el carrito', cart})
     
     }catch (error){
-        return CustomError.createError(
-            "Error",
+        next(error);
+        /*return CustomError.createError(
+            "ERROR",
             null,
-            "Internal server Error",
-            errorDictionary.INTERNAL_SERVER_ERROR);
+            "Internal server error",
+            errorDictionary.INTERNAL_SERVER_ERROR);*/
         //res.status(500).json({error: 'Hubo un error al procesar la solicitud'});
     }
 }
 
 
-export const generatePurchase = async (req = request, res= response)=> {
+export const generatePurchase = async (req = request, res= response, next)=> {
 
-    const purchaser = req.session.user.email;
-    const {cid} = req.params;
+    try {
+        const {cid}=req.params;
 
-    console.log(purchaser);
+        if(!isValidObjectId(cid)){
+            CustomError.createError("Error cartController", `Carrito invalido`, `El id de carrito ${cid} no es valido`, errorDictionary['INVALID_ARGUMENTS']);
+        }
+    
+        const cart=await getCartByIdService(cid);
+        if(!cart){
+            CustomError.createError("Error cartController", `Carrito inexistente`, `El carrito con id ${cid} no existe en BD`, errorDictionary['INVALID_ARGUMENTS']);
+        }
+    
+        if(cart.products.length===0){
+            res.setHeader('Content-Type','application/json');
+            return res.status(400).json({error:`El carrito con id ${cid} no tiene ítems...`})
+        }
+    
+        const pucharser=req.session.user?.email
+        let ticket;
+        let { conStock, sinStock, total } = await validateTicketService(cid);
 
-    let ticket;
-    let { WithStock, WithoutStock, total } = await validateTicketService(cid);
-    if (WithStock.length >= 1) {
-        ticket = await createTicketService(total, purchaser, WithStock);
+        if (conStock.length >= 1) {
+        ticket = await createTicketService(total, pucharser, conStock);
     }
-    console.log(WithStock);
-    const newCart = await getCartByIdService(cid);
-    newCart.products = WithoutStock;
-    await newCart.save();
-    return ticket;
+    
+        let message=`Hola ${req.session.user?.name}...!!!<br>
+        Has registrado una compra con n° ticket ${nroComp}, por un importe de $ ${total}.<br>
+        Detalle: ${JSON.stringify(conStock)}<br>
+        ${sinStock.length>0?`Algunos ítems no pudieron comprarse... por favor consulte`:""}
+        <br>
+        Por favor contacte a <a href="mailto:pagos@julio.com">pagos</a> para finalizar la operación.<br>
+        Gracias...!!!`
+    
+        let result=await enviarMail(pucharser, `Tu compra está a un paso de concretarse...`, message)
+        
+        res.setHeader('Content-Type','application/json');
+        return res.status(200).json({ticket});
+        
+    } catch (error) {
+        next(error)
+    }
 }

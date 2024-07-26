@@ -4,6 +4,7 @@
             {{#if user}}
             <p class="font-semibold">Bienvenido {{user.name}}!</p>
             <a class="scale-96 hover:text-white hover:underline hover:scale-100 " href="/logOut">Cerrar sesion</a>
+            <a class="scale-96 hover:text-white hover:underline hover:scale-100 " href="/carts/{{cart._id}}">Ver Carrito</a>
             {{else}}
             <a class="scale-96 hover:text-white hover:underline hover:scale-100 " href="/login">Iniciar sesion</a>
             <a class="scale-96 hover:text-white hover:underline hover:scale-100 " href="/register">Registrate</a>

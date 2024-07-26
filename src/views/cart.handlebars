@@ -1,7 +1,7 @@
 {{> header}}
 
 <div class="flex flex-col place-items-center border rounded p-3 ">
-    <h1 class="flex text-xl font-semibold mb-7 justify-center">Porductos en el carrito:</h1>
+    <h1 class="flex text-xl font-semibold mb-7 justify-center">Porductos en el carrito {{cart._id}}:</h1>
 
     {{#each cart.products}}
     <div class="flex flex-col items-center border rounded w-64 h-24">

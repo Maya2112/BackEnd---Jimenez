@@ -2,7 +2,7 @@ import { cartModel } from "../models/carts.js";
 
 export const getCartByIdService = async (cid)=>{
     try{
-        return await cartModel.findById(cid).populate('products.id').lean();
+        return await cartModel.findById(cid).populate('products').lean();
     } catch (error) {
         console.log('getCartByIdService error:', error);
         throw error;

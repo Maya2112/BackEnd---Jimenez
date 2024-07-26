@@ -5,8 +5,7 @@ import { auth, admin } from '../middleware/auth.js';
 
 const router = Router();
 
-router.get('/:cid', getCartById);
-//router.post('/', admin, createCart);
+router.get('/:cid', auth, getCartById);
 router.post('/:cid/products/:pid', auth, addProductToCart);
 router.delete('/:cid/products/:pid', auth, deleteCartProduct);
 router.put('/:cid/products/:pid', auth, updateCartProduct);
